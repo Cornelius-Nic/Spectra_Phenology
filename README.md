@@ -1,7 +1,8 @@
 **Reflectance spectra capture temporal variation in functional traits and leaf phenology**
 
 This repository is designed to support this manuscript.
-Preprint: Nichodemus, CO and Meireles, JE (2026). [Reflectance spectra capture temporal variation in functional traits and leaf phenology]((https://www.biorxiv.org/content/10.64898/2026.04.21.719921v1)). bioRxiv https://www.biorxiv.org/content/10.64898/2026.04.21.719921v1 (Under review in _New Phytologist_).
+
+**Preprint**: Nichodemus, CO and Meireles, JE (2026). [Reflectance spectra capture temporal variation in functional traits and leaf phenology]((https://www.biorxiv.org/content/10.64898/2026.04.21.719921v1)). bioRxiv https://www.biorxiv.org/content/10.64898/2026.04.21.719921v1 (Under review in _New Phytologist_).
 
 In this paper, the authors showed the importance of building trait prediction models that cover temporal variability in leaf phenology and functional traits. Such models outperform models trained on a narrow slice of time (a single phenophase), and ignoring temporal variability in leaf phenology and traits can systematically bias trait estimates and ecological inference. The authors built three trait models, namely _all-season_, _week-as-covariate_, and _peak-season_. Additionally, the authors included a widely used trait model - Kothari et al. 2023 (New Phytologist).
 
