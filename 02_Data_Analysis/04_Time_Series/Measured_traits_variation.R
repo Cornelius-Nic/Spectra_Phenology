@@ -23,94 +23,136 @@ species_colors = c("Acer platanoides" = "navyblue", "Acer rubrum" = "slategray4"
                    "Rhododendron maximum" = "green4")
 
 #################
-# Plots - Fig. 2
+# Plots
 #################
 # Leaf dry mass per area
 LMA_plot = ggplot(measured_traits, aes(x = Weeks, y = LMA, color = Species, fill = Species)) +
+  #geom_point(alpha = 0.3, size = 0.5) +
   geom_smooth(method = "loess", se = T, lwd = 1, level = 0.95, alpha = 0.2) +
   #facet_wrap(~ Species, ncol = 4, scales = "free_y") +
   scale_color_manual(values = species_colors) +
   scale_fill_manual(values = species_colors) +
   labs(x = "", 
-    y = expression("LMA (kg m"^-2*")")) +
+    y = expression("LMA (kg m"^-2*")"),
+    tag = "(a)") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray95", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
     strip.text = element_text(face = "italic"),
     legend.position = "right",
     legend.text = element_text(size = 6, face = "italic"),
-    legend.title = element_text(size = 8, face = "bold")
+    legend.title = element_text(size = 8, face = "bold"),
+    plot.tag = element_text(size = 10, face = "bold"),
+    plot.tag.position = c(0, 1)
   )
 
 
 # Equivalent Water Thickness
 EWT_plot = ggplot(measured_traits, aes(x = Weeks, y = EWT, color = Species, fill = Species)) +
+  #geom_point(alpha = 0.3, size = 0.5) +
   geom_smooth(method = "loess", se = T, lwd = 1, level = 0.95, alpha = 0.2) +
   #facet_wrap(~ Species, ncol = 4, scales = "free_y") +
   scale_color_manual(values = species_colors) +
   scale_fill_manual(values = species_colors) +
   labs(x = "", 
-       y = expression("EWT (g cm"^-2*")")) +
+       y = expression("EWT (g cm"^-2*")"),
+       tag = "(b)") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray95", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
     strip.text = element_text(face = "italic"),
     legend.position = "right",
     legend.text = element_text(size = 6, face = "italic"),
-    legend.title = element_text(size = 8, face = "bold")
+    legend.title = element_text(size = 8, face = "bold"),
+    plot.tag = element_text(size = 10, face = "bold"),
+    plot.tag.position = c(0, 1)
   )
 
 
 # Carbon
 C_plot = ggplot(measured_traits, aes(x = Weeks, y = C, color = Species, fill = Species)) +
+  #geom_point(alpha = 0.3, size = 0.5) +
   geom_smooth(method = "loess", se = T, lwd = 1, level = 0.95, alpha = 0.2) +
   #facet_wrap(~ Species, ncol = 4, scales = "free_y") +
   scale_color_manual(values = species_colors) +
   scale_fill_manual(values = species_colors) +
   labs(x = "Week of Year (WOY)", 
-    y = expression("Carbon (%)")) +
+    y = expression("Carbon (%)"),
+    tag = "(c)") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray95", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
     strip.text = element_text(face = "italic"),
     legend.position = "right",
     legend.text = element_text(size = 6, face = "italic"),
-    legend.title = element_text(size = 8, face = "bold")
+    legend.title = element_text(size = 8, face = "bold"),
+    plot.tag = element_text(size = 10, face = "bold"),
+    plot.tag.position = c(0, 1)
   )
 
 
 # Nitrogen
 N_plot = ggplot(measured_traits, aes(x = Weeks, y = N, color = Species, fill = Species)) +
+  #geom_point(alpha = 0.3, size = 0.5) +
   geom_smooth(method = "loess", se = T, lwd = 1, level = 0.95, alpha = 0.2) +
   #facet_wrap(~ Species, ncol = 4, scales = "free_y") +
   scale_color_manual(values = species_colors) +
   scale_fill_manual(values = species_colors) +
   labs(x = "Week of Year (WOY)", 
-    y = expression("Nitrogen (%)")) +
+    y = expression("Nitrogen (%)"),
+    tag = "(d)") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray95", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
     strip.text = element_text(face = "italic"),
     legend.position = "right",
     legend.text = element_text(size = 6, face = "italic"),
-    legend.title = element_text(size = 8, face = "bold")
+    legend.title = element_text(size = 8, face = "bold"),
+    plot.tag = element_text(size = 10, face = "bold"),
+    plot.tag.position = c(0, 1)
+  )
+
+# Quantum Yield
+QY_plot = ggplot(measured_traits, aes(x = Weeks, y = QY, color = Species, fill = Species)) +
+  #geom_point(alpha = 0.3, size = 0.5) +
+  geom_smooth(method = "loess", se = T, lwd = 1, level = 0.95, alpha = 0.2) +
+  #facet_wrap(~ Species, ncol = 4, scales = "free_y") +
+  scale_color_manual(values = species_colors) +
+  scale_fill_manual(values = species_colors) +
+  labs(x = "Week of Year (WOY)", 
+       y = expression("Quantum Yield (α)"),
+       tag = "(e)") +
+  theme_minimal() +
+  theme(
+    panel.grid = element_line(color = "gray95", size = 0.5),
+    panel.border = element_rect(color = "black", fill = NA),
+    plot.title = element_text(hjust = 0.5),
+    strip.text = element_text(face = "italic"),
+    legend.position = "right",
+    legend.text = element_text(size = 6, face = "italic"),
+    legend.title = element_text(size = 8, face = "bold"),
+    plot.tag = element_text(size = 10, face = "bold"),
+    plot.tag.position = c(0, 1)
   )
 
 # Combine plots 2 x 2
-combine_plot = patchwork::wrap_plots(LMA_plot, EWT_plot, C_plot, N_plot,
-                                     ncol = 2, nrow = 2, guides = "collect")
+combine_plot = patchwork::wrap_plots(LMA_plot, EWT_plot, C_plot, N_plot, QY_plot,
+                                     ncol = 3, nrow = 2) +
+  patchwork::plot_layout(guides = "collect") & theme(legend.position = "bottom",
+                                                     legend.text = element_text(size = 8, face = "italic"),
+                                                     legend.title = element_text(size = 10, face = "bold"))
 
 
-ggsave("Figs/Combine_measured_traits.pdf", plot = combine_plot, width = 8, height = 6.5, dpi = 600)
-ggsave("Figs/Combine_measured_traits.png", plot = combine_plot, width = 8, height = 6.5, dpi = 600)
+ggsave("Figs/Combine_measured_traits.pdf", plot = combine_plot, width = 14, height = 7, dpi = 600)
+ggsave("Figs/Combine_measured_traits.png", plot = combine_plot, width = 14, height = 7, dpi = 600)
 
 
 ############################## END #############################################

@@ -61,47 +61,55 @@ cv_spectrum = weekly_mean %>%
     .groups = "drop"
   )
 
-###########################################################
-# Fig. 1: (A) Mean spectra for select 2 species
-# "Acer platanoides", "Rhododendron maximum"
-# To see the changes in all 7 species in SI1, 
+#######################################################################
+# Fig. 1: (A) Mean spectra for select species: "Acer platanoides"
+# PS: Modify script for all 7 species in SI1, 
 # comment out line 71 and modify line 74
-###########################################################
+#######################################################################
 # Step 4: Select weeks and relabel as "season" 
 wk_keep  = c(1, 11, 23)
-spp_keep = c("Acer platanoides", "Rhododendron maximum")
+spp_keep = c("Acer platanoides")
 
 plot_means = weekly_mean %>%
   filter(Week %in% wk_keep, Species %in% spp_keep) %>%
   mutate(
-    season = dplyr::recode(as.character(Week),
-                           `1`  = "early",
-                           `11` = "peak",
-                           `23` = "late"),
-    season = factor(season, levels = c("early", "peak", "late"))
+    phenophase = dplyr::recode(as.character(Week),
+                          `1`  = "young",
+                          `11` = "mature",
+                          `23` = "senescent"),
+    phenophase = factor(phenophase, levels = c("young", "mature", "senescent"))
   )
 
-# Color season
-season_cols = c(early = "lightgreen", peak  = "darkgreen", late  = "darkorange3")
+# Color phenophase
+pheno_cols = c(young = "lightgreen", mature  = "darkgreen", senescent  = "darkorange3")
 
 # Step 5: Spectra Plot
-mean_spp_spec = ggplot(plot_means,
-            aes(x = Wavelength, y = Reflectance_mean, color = season, group = season)) +
+mean_spp_spec_plot = ggplot(plot_means,
+                            aes(x = Wavelength, y = Reflectance_mean, color = phenophase, group = phenophase)) +
   geom_line(linewidth = 0.8) +
   facet_wrap(~ Species, scales = "fixed", ncol = 3) +
-  scale_color_manual(values = season_cols,
-                     labels = c("early season", "peak season", "late season")) + # legend title
-  labs(x = "Wavelength (nm)", y = "Mean reflectance", color = NULL) +
+  scale_color_manual(values = pheno_cols,
+                     labels = c("Young", "Mature", "Old/Senescent")) + # legend title
+  labs(x = "Wavelength (nm)", y = "Mean reflectance", color = NULL,
+       tag = "(a)") + 
   theme_classic(base_size = 11) +
   theme(
     legend.position   = "right",
     strip.text        = element_text(face = "italic"), # italicize species names
-    #strip.background  = element_blank(),       # remove frame behind species names
-    panel.grid = element_line(color = "gray90", size = 0.5),
-    panel.border      = element_rect(color = "black", fill = NA, linewidth = 0.6)
+    strip.background  = element_rect(fill = "gray90"), # remove frame behind species names
+    panel.grid        = element_line(color = "gray90", size = 0.5),
+    panel.border      = element_rect(color = "black", fill = NA, linewidth = 0.6),
+    plot.tag          = element_text(size = 12, face = "bold"),
+    plot.tag.position = c(0, 1)
   )
 
+ggsave("Figs/Spectra_plots/Fig 1_Acer_platanoides_spectra_plot.pdf", 
+       plot = mean_spp_spec_plot, width = 6, height = 5, dpi = 600)
+ggsave("Figs/Spectra_plots/Fig 1_Acer_platanoides_spectra_plot.png", 
+       plot = mean_spp_spec_plot, width = 6, height = 5, dpi = 600)
+
 ggsave("Figs/Spectra_plots/7Species_spectra_plots.pdf", plot = mean_spp_spec, width = 8, height = 8.5, dpi = 600)
+ggsave("Figs/Spectra_plots/7Species_spectra_plots.png", plot = mean_spp_spec, width = 8, height = 8.5, dpi = 600)
 
 
 ########################################################
@@ -118,18 +126,22 @@ cv_plot = ggplot(cv_spectrum, aes(x = Wavelength, y = CV, color = Species)) +
   geom_line(linewidth = 0.8) +
   #facet_wrap(~ Species, scales = "free_y", ncol = 3) +
   scale_color_manual(values = species_colors) + 
-  labs(x = "Wavelength (nm)", y = "Coefficient of variation (CV)") +
+  labs(x = "Wavelength (nm)", y = "Coefficient of variation (CV)",
+       tag = "(b)") +
   theme_classic(base_size = 11) +
   theme(
     legend.position   = "right",
     strip.text        = element_text(face = "italic"), # italicize species names
-    panel.grid.major  = element_line(color = "grey80"),  # remove frame behind species names
+    panel.grid.major  = element_line(color = "grey80"),               # remove frame behind species names
     # keep a frame around the plot panels:
     panel.border      = element_rect(color = "black", fill = NA, linewidth = 0.6),
     legend.text = element_text(size = 7, face = "italic"),
-    legend.title = element_text(size = 8, face = "bold")
+    legend.title = element_text(size = 8, face = "bold"),
+    plot.tag = element_text(size = 12, face = "bold"),
+    plot.tag.position = c(0, 1)
   )
 
 ggsave("Figs/Spectra_plots/CV_plots.pdf", plot = cv_plot, width = 8, height = 5, dpi = 600)
+ggsave("Figs/Spectra_plots/CV_plots.png", plot = cv_plot, width = 8, height = 5, dpi = 600)
 
 ##############################################################################################

@@ -30,6 +30,7 @@ kothari_traits$Weeks     = kothari_traits$Week + 21
 # Split traits by Species
 fresh_spec_traits   = split(fresh_spec_traits, fresh_spec_traits$Species)
 all_season_traits   = split(all_season_traits, all_season_traits$Species)
+#week_covar_traits   = split(week_covar_traits, week_covar_traits$Species)
 peak_season_traits  = split(peak_season_traits, peak_season_traits$Species)
 kothari_traits      = split(kothari_traits, kothari_traits$Species)
 
@@ -49,11 +50,15 @@ kothari_pred_df = bind_rows(kothari_traits, .id = "Species") %>%
 con_pred_all_df = bind_rows(all_season_traits, .id = "Species") %>%
   mutate(Source = "All season")
 
+#con_pred_week_df = bind_rows(week_covar_traits, .id = "Species") %>%
+#  mutate(Source = "Week as covariate")
+
 con_pred_peak_df = bind_rows(peak_season_traits, .id = "Species") %>%
   mutate(Source = "Peak season")
 
 # Combine all into one long dataframe
 combined_df = bind_rows(measured_traits_df, kothari_pred_df, con_pred_all_df, con_pred_peak_df)
+#combined_df = bind_rows(measured_traits_df, kothari_pred_df, con_pred_all_df, con_pred_week_df, con_pred_peak_df)
 
 # Ensure Week is numeric
 combined_df$Week = as.numeric(as.character(combined_df$Week))
@@ -62,7 +67,8 @@ combined_df$Week = as.numeric(as.character(combined_df$Week))
 # Plots
 ###############################
 # LMA
-LMA_plot = ggplot(combined_df, aes(x = Weeks, y = LMA, color = Source, fill = Source)) +
+LMA_plot = ggplot(combined_df, aes(x = Weeks, y = LMA, color = Source)) + # fill = Source
+  #geom_point(alpha = 0.15, size = 0.6) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "darkred") +
   geom_smooth(method = "loess", se = TRUE, lwd = 1, alpha = 0.2) +
   facet_wrap(~ Species, ncol = 1, scales = "free_y") +
@@ -72,26 +78,27 @@ LMA_plot = ggplot(combined_df, aes(x = Weeks, y = LMA, color = Source, fill = So
   #                              "Week as covariate" = "darkorchid3",
                                 "Peak season" = "darkblue"),
   breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
-  scale_fill_manual(values = c("Measured traits" = "black", 
-                               "Kothari 2023" = "darkorange3", 
-                               "All season" = "forestgreen",
-  #                             "Week as covariate" = "darkorchid3",
-                               "Peak season" = "darkblue"),
-  breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
+#  scale_fill_manual(values = c("Measured traits" = "black", 
+#                               "Kothari 2023" = "darkorange3", 
+#                               "All season" = "forestgreen",
+#  #                             "Week as covariate" = "darkorchid3",
+#                               "Peak season" = "darkblue"),
+#  breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
   labs(x = "Week of Year (WOY)", y = expression("LMA (kg m"^-2*")"), title = "LMA") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
-    strip.text = element_text(face = "italic", size = 7),
-    legend.position = ""
-  )
+    strip.text = element_text(face = "italic", size = 5),
+    legend.position = "none"
+  ) + guides(color = "none")
 
 
 # EWT
-EWT_plot = ggplot(combined_df, aes(x = Weeks, y = EWT, color = Source, fill = Source)) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "darkred") +
+EWT_plot = ggplot(combined_df, aes(x = Weeks, y = EWT, color = Source)) + # fill = Source
+  #geom_point(alpha = 0.4, size = 1) +
+  #geom_hline(yintercept = 0, linetype = "dashed", color = "darkred") +
   geom_smooth(method = "loess", se = TRUE, lwd = 1, alpha = 0.2) +
   facet_wrap(~ Species, ncol = 1, scales = "free_y") +
   scale_color_manual(values = c("Measured traits" = "black", 
@@ -100,25 +107,26 @@ EWT_plot = ggplot(combined_df, aes(x = Weeks, y = EWT, color = Source, fill = So
    #                             "Week as covariate" = "darkorchid3",
                                 "Peak season" = "darkblue"),
   breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
-  scale_fill_manual(values = c("Measured traits" = "black", 
-                               "Kothari 2023" = "darkorange3", 
-                               "All season" = "forestgreen",
- #                             "Week as covariate" = "darkorchid3",
-                               "Peak season" = "darkblue"),
- breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
+#  scale_fill_manual(values = c("Measured traits" = "black", 
+#                               "Kothari 2023" = "darkorange3", 
+#                               "All season" = "forestgreen",
+#                             "Week as covariate" = "darkorchid3",
+#                               "Peak season" = "darkblue"),
+# breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
   labs(x = "Week of Year (WOY)", y = expression(EWT~(g~cm^{-2})), title = "EWT") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
-    strip.text = element_text(face = "italic", size = 7),
-    legend.position = "right"
-  )
+    strip.text = element_text(face = "italic", size = 5),
+    legend.position = "none"
+  ) + guides(color = "none")
 
 
 # Carbon
-C_plot = ggplot(combined_df, aes(x = Weeks, y = C, color = Source, fill = Source)) +
+C_plot = ggplot(combined_df, aes(x = Weeks, y = C, color = Source)) + # fill = Source
+  #geom_point(alpha = 0.4, size = 1) +
   geom_smooth(method = "loess", se = TRUE, lwd = 1, alpha = 0.2) +
   facet_wrap(~ Species, ncol = 1, scales = "free_y") +
   scale_color_manual(values = c("Measured traits" = "black", 
@@ -127,25 +135,26 @@ C_plot = ggplot(combined_df, aes(x = Weeks, y = C, color = Source, fill = Source
   #                              "Week as covariate" = "darkorchid3",
                                 "Peak season" = "darkblue"),
   breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
-  scale_fill_manual(values = c("Measured traits" = "black", 
-                               "Kothari 2023" = "darkorange3", 
-                               "All season" = "forestgreen",
-  #                             "Week as covariate" = "darkorchid3",
-                               "Peak season" = "darkblue"),
-  breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
+#  scale_fill_manual(values = c("Measured traits" = "black", 
+#                               "Kothari 2023" = "darkorange3", 
+#                               "All season" = "forestgreen",
+#                             "Week as covariate" = "darkorchid3",
+#                               "Peak season" = "darkblue"),
+#  breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
   labs(x = "Week of Year (WOY)", y = "Carbon (%)", title = "Carbon") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
-    strip.text = element_text(face = "italic", size = 7),
-    legend.position = ""
-  )
+    strip.text = element_text(face = "italic", size = 5),
+    legend.position = "none"
+  ) + guides(color = "none")
 
 
 # Nitrogen
-N_plot = ggplot(combined_df, aes(x = Weeks, y = N, color = Source, fill = Source)) +
+N_plot = ggplot(combined_df, aes(x = Weeks, y = N, color = Source)) + # fill = Source
+  #geom_point(alpha = 0.4, size = 1) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "darkred") +
   geom_smooth(method = "loess", se = TRUE, lwd = 1, alpha = 0.2) +
   facet_wrap(~ Species, ncol = 1, scales = "free_y") +
@@ -155,29 +164,66 @@ N_plot = ggplot(combined_df, aes(x = Weeks, y = N, color = Source, fill = Source
   #                              "Week as covariate" = "darkorchid3",
                                 "Peak season" = "darkblue"),
   breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
-  scale_fill_manual(values = c("Measured traits" = "black", 
-                               "Kothari 2023" = "darkorange3", 
-                               "All season" = "forestgreen",
-  #                             "Week as covariate" = "darkorchid3",
-                               "Peak season" = "darkblue"),
-  breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
+#  scale_fill_manual(values = c("Measured traits" = "black", 
+#                               "Kothari 2023" = "darkorange3", 
+#                               "All season" = "forestgreen",
+#  #                             "Week as covariate" = "darkorchid3",
+#                               "Peak season" = "darkblue"),
+#  breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
   labs(x = "Week of Year (WOY)", y = "Nitrogen (%)", title = "Nitrogen") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
-    strip.text = element_text(face = "italic", size = 7),
-    legend.position = "right"
-  )
+    strip.text = element_text(face = "italic", size = 5),
+    legend.position = "none"
+  ) #+ guides(color = "none")
 
-# Combine plots 0 x 4
-combine_plot2 = patchwork::wrap_plots(LMA_plot, EWT_plot, C_plot, N_plot, 
-                                     ncol = 4, guides = "collect") +
-  patchwork::plot_layout(guides = "collect") & theme(legend.position = "bottom")
+# Quantum Yield
+QY_plot = ggplot(combined_df, aes(x = Weeks, y = QY, color = Source)) + # fill = Source
+  #geom_point(alpha = 0.4, size = 1) +
+  #geom_hline(yintercept = 0, linetype = "dashed", color = "darkred") +
+  geom_smooth(method = "loess", se = TRUE, lwd = 1, alpha = 0.2) +
+  facet_wrap(~ Species, ncol = 1, scales = "free_y") +
+  scale_color_manual(values = c("Measured traits" = "black", 
+                                "Kothari 2023" = "darkorange3", 
+                                "All season" = "forestgreen",
+#                               "Week as covariate" = "darkorchid3",
+                                "Peak season" = "darkblue"),
+                     breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
+#  scale_fill_manual(values = c("Measured traits" = "black", 
+#                               "Kothari 2023" = "darkorange3", 
+#                               "All season" = "forestgreen",
+#                              "Week as covariate" = "darkorchid3",
+#                               "Peak season" = "darkblue"),
+#                    breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
+  labs(x = "Week of Year (WOY)", y = "Quantum Yield (α)", title = "QY") +
+  theme_minimal() +
+  theme(
+    panel.grid = element_line(color = "gray90", size = 0.5),
+    panel.border = element_rect(color = "black", fill = NA),
+    plot.title = element_text(hjust = 0.5),
+    strip.text = element_text(face = "italic", size = 5),
+    legend.position = "none"
+  ) + guides(color = "none")
 
-ggsave("Figs/Timeseries_plots/Timeseries_LMA_EWT_C_and_N_plots.pdf", plot = combine_plot2, width = 8.5, height = 10.5, dpi = 600)
-ggsave("Figs/Timeseries_plots/Timeseries_LMA_EWT_C_and_N_plots.png", plot = combine_plot2, width = 8.5, height = 10.5, dpi = 600)
+# Combine plots 0 x 5
+combine_plot2 = patchwork::wrap_plots(LMA_plot, EWT_plot, C_plot, N_plot, QY_plot,
+                                     ncol = 5) +
+  patchwork::plot_layout(guides = "collect") & theme(legend.position = "bottom",
+                                                     legend.title = element_text(size = 8, face = "bold"),
+                                                     legend.text = element_text(size = 8),
+                                                     legend.key.size = unit(0.4, "cm"),
+                                                     axis.text.x = element_text(size = 7),
+                                                     axis.title.x = element_text(size = 8),
+                                                     axis.title.y = element_text(size = 8),
+                                                     plot.title = element_text(size = 8, face = "bold"))
+
+ggsave("Figs/Timeseries_plots/Timeseries_LMA_EWT_C_N_QY_plots.pdf", 
+       plot = combine_plot2, width = 8.5, height = 11.5, dpi = 600)
+ggsave("Figs/Timeseries_plots/Timeseries_LMA_EWT_C_N_QY_plots.png", 
+       plot = combine_plot2, width = 8.5, height = 11.5, dpi = 600)
 
 
 ################################################################################
@@ -193,71 +239,96 @@ species_colors = c("Acer platanoides" = "navyblue", "Acer rubrum" = "slategray4"
 
 # LMA
 week_LMA_plot = ggplot(week_covar_traits, aes(x = Weeks, y = LMA, color = Species)) +
+  #geom_point(alpha = 0.4, size = 1) +
   geom_smooth(method = "loess", se = T, lwd = 1, alpha = 0.2) +
   facet_wrap(~ Species, ncol = 1, scales = "free_y") +
   scale_color_manual(values = species_colors) +
   labs(x = "Week of Year (WOY)", y = expression("LMA (kg m"^-2*")"), title = "LMA") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
-    strip.text = element_text(face = "italic", size = 7),
+    strip.text = element_text(face = "italic", size = 5),
     legend.position = "none"
   )
 
 # EWT
 week_EWT_plot = ggplot(week_covar_traits, aes(x = Weeks, y = EWT, color = Species)) +
+  #geom_point(alpha = 0.4, size = 1) +
   geom_smooth(method = "loess", se = T, lwd = 1, alpha = 0.2) +
   facet_wrap(~ Species, ncol = 1, scales = "free_y") +
   scale_color_manual(values = species_colors) +
   labs(x = "Week of Year (WOY)", y = expression(EWT~(g~cm^{-2})), title = "EWT") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
-    strip.text = element_text(face = "italic", size = 7),
+    strip.text = element_text(face = "italic", size = 5),
     legend.position = "none"
   )
 
 # Carbon
 week_C_plot = ggplot(week_covar_traits, aes(x = Weeks, y = C, color = Species)) +
+  #geom_point(alpha = 0.4, size = 1) +
   geom_smooth(method = "loess", se = T, lwd = 1, alpha = 0.2) +
   facet_wrap(~ Species, ncol = 1, scales = "free_y") +
   scale_color_manual(values = species_colors) +
   labs(x = "Week of Year (WOY)", y = "Carbon (%)", title = "Carbon") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
-    strip.text = element_text(face = "italic", size = 7),
+    strip.text = element_text(face = "italic", size = 5),
     legend.position = "none"
   )
 
 # Nitrogen
 week_N_plot = ggplot(week_covar_traits, aes(x = Weeks, y = N, color = Species)) +
+  #geom_point(alpha = 0.4, size = 1) +
   geom_smooth(method = "loess", se = T, lwd = 1, alpha = 0.2) +
   facet_wrap(~ Species, ncol = 1, scales = "free_y") +
   scale_color_manual(values = species_colors) +
   labs(x = "Week of Year (WOY)", y = "Nitrogen (%)", title = "Nitrogen") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
-    strip.text = element_text(face = "italic", size = 7),
+    strip.text = element_text(face = "italic", size = 5),
     legend.position = "none"
   )
 
+# Quantum Yield
+week_QY_plot = ggplot(week_covar_traits, aes(x = Weeks, y = QY, color = Species)) +
+  #geom_point(alpha = 0.4, size = 1) +
+  geom_smooth(method = "loess", se = T, lwd = 1, alpha = 0.2) +
+  facet_wrap(~ Species, ncol = 1, scales = "free_y") +
+  scale_color_manual(values = species_colors) +
+  labs(x = "Week of Year (WOY)", y = "Quantum Yield (α)", title = "QY") +
+  theme_minimal() +
+  theme(
+    panel.grid = element_line(color = "gray90", size = 0.5),
+    panel.border = element_rect(color = "black", fill = NA),
+    plot.title = element_text(hjust = 0.5),
+    strip.text = element_text(face = "italic", size = 5),
+    legend.position = "none"
+  )
 
-combine_plot_S8 = patchwork::wrap_plots(week_LMA_plot, week_EWT_plot, week_C_plot, week_N_plot, 
-                                      ncol = 4, guides = "collect") +
-  patchwork::plot_layout(guides = "collect") #& theme(legend.position = "bottom")
+combine_plot_S9 = patchwork::wrap_plots(week_LMA_plot, week_EWT_plot, week_C_plot, week_N_plot, week_QY_plot,
+                                      ncol = 5, guides = "collect") +
+  patchwork::plot_layout(guides = "collect") & theme(axis.text.x = element_text(size = 7),
+                                                     axis.title.x = element_text(size = 8),
+                                                     axis.title.y = element_text(size = 8),
+                                                     plot.title = element_text(size = 8, face = "bold"))
 
-ggsave("Figs/Timeseries_plots/Timeseries_week_as_covariate_plots.pdf", plot = combine_plot_S8, width = 8.5, height = 10.5, dpi = 600)
-ggsave("Figs/Timeseries_plots/Timeseries_week_as_covariate_plots.png", plot = combine_plot_S8, width = 8.5, height = 10.5, dpi = 600)
+
+ggsave("Figs/Timeseries_plots/Timeseries_week_as_covariate_plots.pdf", 
+       plot = combine_plot_S9, width = 8.5, height = 11.5, dpi = 600)
+ggsave("Figs/Timeseries_plots/Timeseries_week_as_covariate_plots.png", 
+       plot = combine_plot_S9, width = 8.5, height = 11.5, dpi = 600)
 
 
 ################################################################################
@@ -285,13 +356,16 @@ acer_rub_plot = ggplot(acer_rubrum_df, aes(x = Weeks, y = Total_Chl, color = Spe
   geom_smooth(method = "loess", se = TRUE, lwd = 1, alpha = 0.2) +
   facet_wrap(~ Species, ncol = 1, scales = "free_y") +
   scale_color_manual(values = species_colors) +
-  labs(x = "Week of Year (WOY)", y = "Total Chlorophyll (mg/g)") +
+  labs(x = "Week of Year (WOY)", y = "Total Chlorophyll (mg/g)",
+       tag = "(a)") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     strip.text = element_text(face = "italic", size = 10),
-    legend.position = "none"
+    legend.position = "none",
+    plot.tag = element_text(size = 10, face = "bold"),
+    plot.tag.position = c(0, 1)
   )
 
 
@@ -301,13 +375,16 @@ quercus_rub_plot = ggplot(quercus_rubra_df, aes(x = Weeks, y = Sol, color = Spec
   geom_smooth(method = "loess", se = TRUE, lwd = 1, alpha = 0.2) +
   facet_wrap(~ Species, ncol = 1, scales = "free_y") +
   scale_color_manual(values = species_colors) +
-  labs(x = "Week of Year (WOY)", y = "Soluble fractions (%)") +
+  labs(x = "Week of Year (WOY)", y = "Soluble fractions (%)",
+       tag = "(b)") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     strip.text = element_text(face = "italic", size = 10),
-    legend.position = "none"
+    legend.position = "none",
+    plot.tag = element_text(size = 10, face = "bold"),
+    plot.tag.position = c(0, 1)
   )
 
 
@@ -315,8 +392,10 @@ combine_fig5 = patchwork::wrap_plots(acer_rub_plot, quercus_rub_plot,
                                       ncol = 2, guides = "collect") #+
  # patchwork::plot_layout(guides = "collect") #& theme(legend.position = "bottom")
 
-ggsave("Figs/Timeseries_plots/Timeseries_acer_quercus_plots.pdf", plot = combine_fig5, width = 8, height = 5, dpi = 600)
-ggsave("Figs/Timeseries_plots/Timeseries_acer_quercus_plots.png", plot = combine_fig5, width = 8, height = 5, dpi = 600)
+ggsave("Figs/Timeseries_plots/Timeseries_acer_quercus_plots.pdf", 
+       plot = combine_fig5, width = 8, height = 5, dpi = 600)
+ggsave("Figs/Timeseries_plots/Timeseries_acer_quercus_plots.png", 
+       plot = combine_fig5, width = 8, height = 5, dpi = 600)
 
 
 ###########################################################
@@ -335,7 +414,7 @@ Total_Chl_plot = ggplot(kothari_traits_df, aes(x = Weeks, y = Total_Chl, color =
        title = "Total Chlorophyll") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
     strip.text = element_text(face = "italic", size = 8),
@@ -354,7 +433,7 @@ Carot_plot = ggplot(kothari_traits_df, aes(x = Weeks, y = Carot, color = Species
        title = "Carotenoids") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
     strip.text = element_text(face = "italic", size = 8),
@@ -374,7 +453,7 @@ Cell_plot = ggplot(kothari_traits_df, aes(x = Weeks, y = Cell, color = Species))
        title = "Cellulose") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
     strip.text = element_text(face = "italic", size = 8),
@@ -382,12 +461,14 @@ Cell_plot = ggplot(kothari_traits_df, aes(x = Weeks, y = Cell, color = Species))
   )
 
 
-combine_plot_S11 = patchwork::wrap_plots(Total_Chl_plot, Carot_plot, Cell_plot, 
+combine_plot_S13 = patchwork::wrap_plots(Total_Chl_plot, Carot_plot, Cell_plot, 
                                       ncol = 3, guides = "collect") +
   patchwork::plot_layout(guides = "collect") #& theme(legend.position = "bottom")
 
-ggsave("Figs/Timeseries_plots/Timeseries_TChl_Carot_and_Cell_plots.pdf", plot = combine_plot_S11, width = 8.5, height = 10.5, dpi = 600)
-ggsave("Figs/Timeseries_plots/Timeseries_TChl_Carot_and_Cell_plots.png", plot = combine_plot_S11, width = 8.5, height = 10.5, dpi = 600)
+ggsave("Figs/Timeseries_plots/Timeseries_TChl_Carot_and_Cell_plots.pdf", 
+       plot = combine_plot_S13, width = 8.5, height = 10.5, dpi = 600)
+ggsave("Figs/Timeseries_plots/Timeseries_TChl_Carot_and_Cell_plots.png", 
+       plot = combine_plot_S13, width = 8.5, height = 10.5, dpi = 600)
 
 
 #################################################
@@ -404,7 +485,7 @@ LDMC_plot = ggplot(kothari_traits_df, aes(x = Weeks, y = LDMC, color = Species))
        title = "Leaf Dry Matter Content") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
     strip.text = element_text(face = "italic", size = 8),
@@ -422,7 +503,7 @@ Lignin_plot = ggplot(kothari_traits_df, aes(x = Weeks, y = Lignin, color = Speci
        title = "Lignin") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
     strip.text = element_text(face = "italic", size = 8),
@@ -440,7 +521,7 @@ Soluble_plot = ggplot(kothari_traits_df, aes(x = Weeks, y = Sol, color = Species
        title = "Soluble fractions") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
     strip.text = element_text(face = "italic", size = 8),
@@ -448,12 +529,14 @@ Soluble_plot = ggplot(kothari_traits_df, aes(x = Weeks, y = Sol, color = Species
   )
 
 
-combine_plot_S10 = patchwork::wrap_plots(LDMC_plot, Lignin_plot, Soluble_plot, 
+combine_plot_S12 = patchwork::wrap_plots(LDMC_plot, Lignin_plot, Soluble_plot, 
                                       ncol = 3, guides = "collect") +
   patchwork::plot_layout(guides = "collect") #& theme(legend.position = "bottom")
 
-ggsave("Figs/Timeseries_plots/Timeseries_LDMC_Lignin_Soluble_plots.pdf", plot = combine_plot_S10, width = 8.5, height = 10.5, dpi = 600)
-ggsave("Figs/Timeseries_plots/Timeseries_LDMC_Lignin_Soluble_plots.png", plot = combine_plot_S10, width = 8.5, height = 10.5, dpi = 600)
+ggsave("Figs/Timeseries_plots/Timeseries_LDMC_Lignin_Soluble_plots.pdf", 
+       plot = combine_plot_S12, width = 8.5, height = 10.5, dpi = 600)
+ggsave("Figs/Timeseries_plots/Timeseries_LDMC_Lignin_Soluble_plots.png", 
+       plot = combine_plot_S12, width = 8.5, height = 10.5, dpi = 600)
 
 
 #################################################
@@ -470,7 +553,7 @@ P_plot = ggplot(kothari_traits_df, aes(x = Weeks, y = P, color = Species)) +
        title = "Phosphorus") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
     strip.text = element_text(face = "italic", size = 8),
@@ -488,7 +571,7 @@ K_plot = ggplot(kothari_traits_df, aes(x = Weeks, y = K, color = Species)) +
        title = "Potassium") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
     strip.text = element_text(face = "italic", size = 8),
@@ -507,7 +590,7 @@ Hemic_plot = ggplot(kothari_traits_df, aes(x = Weeks, y = Hemic, color = Species
        title = "Hemicellulose") +
   theme_minimal() +
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray90", size = 0.5),
     panel.border = element_rect(color = "black", fill = NA),
     plot.title = element_text(hjust = 0.5),
     strip.text = element_text(face = "italic", size = 8),
@@ -515,12 +598,14 @@ Hemic_plot = ggplot(kothari_traits_df, aes(x = Weeks, y = Hemic, color = Species
   )
 
 
-combine_plot_S12 = patchwork::wrap_plots(P_plot, K_plot, Hemic_plot, 
+combine_plot_S14 = patchwork::wrap_plots(P_plot, K_plot, Hemic_plot, 
                                          ncol = 3, guides = "collect") +
   patchwork::plot_layout(guides = "collect") #& theme(legend.position = "bottom")
 
-ggsave("Figs/Timeseries_plots/Timeseries_P_K_Hemic_plots.pdf", plot = combine_plot_S12, width = 8.5, height = 10.5, dpi = 600)
-ggsave("Figs/Timeseries_plots/Timeseries_P_K_Hemic_plots.png", plot = combine_plot_S12, width = 8.5, height = 10.5, dpi = 600)
+ggsave("Figs/Timeseries_plots/Timeseries_P_K_Hemic_plots.pdf", 
+       plot = combine_plot_S14, width = 8.5, height = 10.5, dpi = 600)
+ggsave("Figs/Timeseries_plots/Timeseries_P_K_Hemic_plots.png", 
+       plot = combine_plot_S14, width = 8.5, height = 10.5, dpi = 600)
 
 
 ################################################################################
@@ -528,3 +613,58 @@ ggsave("Figs/Timeseries_plots/Timeseries_P_K_Hemic_plots.png", plot = combine_pl
 ############# END ############### END ################ END #####################
 
 ################################################################################
+# Letter to the editor plot
+# Select datasets
+# Measured vs Nichodemus and Meireles Models vs Kothari Models
+################################################################################
+# Combine all data sets
+# Add source label to each
+measured_traits_df = bind_rows(fresh_spec_traits, .id = "Species") %>%
+  mutate(Source = "Measured traits")
+
+kothari_pred_df = bind_rows(kothari_traits, .id = "Species") %>%
+  mutate(Source = "Kothari 2023")
+
+con_pred_all_df = bind_rows(all_season_traits, .id = "Species") %>%
+  mutate(Source = "All season")
+
+#con_pred_week_df = bind_rows(week_as_var_traits, .id = "Species") %>%
+#  mutate(Source = "Week as a covariate")
+
+con_pred_peak_df = bind_rows(peak_season_traits, .id = "Species") %>%
+  mutate(Source = "Peak season")
+
+# Combine all into one long dataframe
+xcombined_df = bind_rows(measured_traits_df, kothari_pred_df, con_pred_all_df, con_pred_peak_df)
+
+# Ensure Week is numeric
+xcombined_df$Week = as.numeric(as.character(xcombined_df$Week))
+
+# Filter to select one species and plot (Letter to the Editor)
+spp_names   = c("Acer platanoides", "Acer rubrum")
+filtered_df = xcombined_df %>% filter(Species == spp_names)
+
+xLMA_plot = ggplot(filtered_df, aes(x = Weeks, y = LMA, color = Source)) +
+  #geom_point(alpha = 0.25, size = 0.6) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "darkred") +
+  geom_smooth(method = "loess", se = T, lwd = 1, alpha = 0.2) +
+  facet_wrap(~ Species, ncol = 2, scales = "free_y") +
+  scale_color_manual(values = c("Measured traits" = "black", 
+                                "Kothari 2023" = "darkorange3", 
+                                "All season" = "forestgreen",
+                                "Peak season" = "darkblue"),
+  breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
+  scale_fill_manual(values = c("Measured traits" = "black", 
+                               "Kothari 2023" = "darkorange3", 
+                               "All season" = "forestgreen",
+                               "Peak season" = "darkblue"),
+  breaks = c("Measured traits", "All season", "Peak season", "Kothari 2023")) +
+  labs(x = "Week of Year (WOY)", y = expression("LMA (kg m"^-2*")")) +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA),
+    plot.title = element_text(hjust = 0.5),
+    strip.text = element_text(face = "italic"),
+    legend.position = "bottom"
+  )

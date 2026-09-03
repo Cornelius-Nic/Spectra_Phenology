@@ -14,7 +14,8 @@ library("readr")
 all_vip_paths = c("LMA" = "Data/Processed/Coefficients_and_Results/FM_all_season/vip_LMA.csv",
                   "EWT" = "Data/Processed/Coefficients_and_Results/FM_all_season/vip_EWT.csv",
                   "C"   = "Data/Processed/Coefficients_and_Results/FM_all_season/vip_C.csv",
-                  "N"   = "Data/Processed/Coefficients_and_Results/FM_all_season/vip_N.csv")
+                  "N"   = "Data/Processed/Coefficients_and_Results/FM_all_season/vip_N.csv",
+                  "QY"  = "Data/Processed/Coefficients_and_Results/FM_all_season/vip_QY.csv")
 
 #all_season_vip = lapply(all_vip_paths, read_csv)
 
@@ -32,7 +33,7 @@ all_vip_long_df = all_season_vip_df %>%
                names_to = "Wavelength",
                values_to = "VIP") %>%
   mutate(Wavelength = readr::parse_number(Wavelength),
-         Trait = factor(Trait, levels = c("LMA", "EWT", "C", "N")))
+         Trait = factor(Trait, levels = c("LMA", "EWT", "C", "N", "QY")))
 
 # Summarise VIP values
 all_vip_summary_df  = all_vip_long_df %>% 
@@ -60,15 +61,18 @@ all_vip_plot = ggplot(all_vip_summary_df, aes(x = Wavelength, y = mean_VIP)) +
     panel.background = element_blank()
   )
 
+#ggsave("Figs/VIP_plots/vip_plot_all_season.pdf", plot = vip_plot_all, width = 8.5, height = 6.5, dpi = 600)
+
 
 ################################################################################
 # Week as covariate
 ################################################################################
 
 week_vip_paths = c("LMA" = "Data/Processed/Coefficients_and_Results/FM_week_as_covariate/vip_LMA.csv",
-                  "EWT"  = "Data/Processed/Coefficients_and_Results/FM_week_as_covariate/vip_EWT.csv",
-                  "C"    = "Data/Processed/Coefficients_and_Results/FM_week_as_covariate/vip_C.csv",
-                  "N"    = "Data/Processed/Coefficients_and_Results/FM_week_as_covariate/vip_N.csv")
+                   "EWT"  = "Data/Processed/Coefficients_and_Results/FM_week_as_covariate/vip_EWT.csv",
+                   "C"    = "Data/Processed/Coefficients_and_Results/FM_week_as_covariate/vip_C.csv",
+                   "N"    = "Data/Processed/Coefficients_and_Results/FM_week_as_covariate/vip_N.csv",
+                   "QY"   = "Data/Processed/Coefficients_and_Results/FM_week_as_covariate/vip_QY.csv")
 
 #week_covar_vip = lapply(week_vip_paths, read_csv)
 week_covar_vip = lapply(names(week_vip_paths), function(trait) {
@@ -85,7 +89,7 @@ week_vip_long_df = week_vip_df %>%
                names_to = "Wavelength",
                values_to = "VIP") %>%
   mutate(Wavelength = readr::parse_number(Wavelength),
-         Trait = factor(Trait, levels = c("LMA", "EWT", "C", "N")))
+         Trait = factor(Trait, levels = c("LMA", "EWT", "C", "N", "QY")))
 
 # Summarise VIP values
 week_vip_summary_df  = week_vip_long_df %>% 
@@ -112,15 +116,18 @@ week_vip_plot = ggplot(week_vip_summary_df, aes(x = Wavelength, y = mean_VIP)) +
     panel.background = element_blank()
   )
 
+#ggsave("Figs/VIP_plots/vip_plot_week_as_a_covariate.pdf", plot = week_vip_plots, width = 8.5, height = 6.5, dpi = 600)
+
 
 ################################################################################
 # Peak season
 ################################################################################
 
 peak_vip_paths = c("LMA" = "Data/Processed/Coefficients_and_Results/FM_peak_season/vip_LMA.csv",
-                  "EWT"  = "Data/Processed/Coefficients_and_Results/FM_peak_season/vip_EWT.csv",
-                  "C"    = "Data/Processed/Coefficients_and_Results/FM_peak_season/vip_C.csv",
-                  "N"    = "Data/Processed/Coefficients_and_Results/FM_peak_season/vip_N.csv")
+                   "EWT"  = "Data/Processed/Coefficients_and_Results/FM_peak_season/vip_EWT.csv",
+                   "C"    = "Data/Processed/Coefficients_and_Results/FM_peak_season/vip_C.csv",
+                   "N"    = "Data/Processed/Coefficients_and_Results/FM_peak_season/vip_N.csv",
+                   "QY"   = "Data/Processed/Coefficients_and_Results/FM_peak_season/vip_QY.csv")
 
 #peak_season_vip = lapply(peak_vip_paths, read_csv)
 peak_season_vip = lapply(names(peak_vip_paths), function(trait) {
@@ -137,7 +144,7 @@ peak_vip_long_df = peak_season_vip_df %>%
                names_to = "Wavelength",
                values_to = "VIP") %>%
   mutate(Wavelength = readr::parse_number(Wavelength),
-         Trait = factor(Trait, levels = c("LMA", "EWT", "C", "N")))
+         Trait = factor(Trait, levels = c("LMA", "EWT", "C", "N", "QY")))
 
 # Summarise VIP values
 peak_vip_summary_df  = peak_vip_long_df %>% 
@@ -164,13 +171,13 @@ peak_vip_plot = ggplot(peak_vip_summary_df, aes(x = Wavelength, y = mean_VIP)) +
     panel.background = element_blank()
   )
 
-############################
-# Combine plots 1 x 3
-############################
-combine_vip_plot = patchwork::wrap_plots(all_vip_plot, week_vip_plot, peak_vip_plot,
-                                     ncol = 3, guides = "collect")
+#ggsave("Figs/VIP_plots/vip_plot_peak_season.pdf", plot = peak_vip_plot, width = 8.5, height = 6.5, dpi = 600)
 
-ggsave("Figs/VIP_plots/combine_vip_plot.pdf", plot = combine_vip_plot, width = 8.5, height = 10.5, dpi = 600)
-ggsave("Figs/VIP_plots/combine_vip_plot.png", plot = combine_vip_plot, width = 8.5, height = 10.5, dpi = 600)
+# Combine plots 1 x 3
+combine_vip_plot = patchwork::wrap_plots(all_vip_plot, week_vip_plot, peak_vip_plot,
+                                         ncol = 3, guides = "collect")
+
+ggsave("Figs/VIP_plots/combine_vip_plot.pdf", plot = combine_vip_plot, width = 8.5, height = 11, dpi = 600)
+ggsave("Figs/VIP_plots/combine_vip_plot.png", plot = combine_vip_plot, width = 8.5, height = 11, dpi = 600)
 
 ################################################################################
